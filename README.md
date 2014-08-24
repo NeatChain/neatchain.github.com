@@ -95,7 +95,7 @@ You can make things as 'one liner' as this
         [TestMethod]
         public void it_should_execute_only_the_member_of_the_chain_that_can_handle_the_argument_passed4()
         {
-            var result = NeatChain.Execute<int, int>(1, new Number1Handler());
+            var result = NeatChain.SetUpWithArgument(1, new Number1Handler()).Execute<int>();
 
             Assert.IsTrue(result.Count == 1);
             Assert.AreEqual(100, result.First());
