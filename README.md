@@ -1,12 +1,9 @@
 NeatChain
 
-=========
+
 
 
 Get it via nuget
-
-===
-
 
 Install-Package NeatChain
 
