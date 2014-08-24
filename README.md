@@ -22,20 +22,27 @@ You are provided with a neat opinionated pattern of input argument validation
 
 You are provided with the capability to only execute classes when its their responsibility to do so
 
+
+
 ```cs
 
- namespace NeatChain.Tests
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using NeatChainFx.Tests.TestHandlers;
+
+namespace NeatChainFx.Tests
 {
+
+```
+You can make things as explicit as this
+```cs
+
     [TestClass]
     public class When_a_chain_is_created
     {
-
-
-```
-
-You can make things as explicit as this
-
-```cs
         /// <summary>
         ///     You can make things as explicit as this
         /// </summary>
@@ -43,7 +50,7 @@ You can make things as explicit as this
         public void it_should_execute_only_the_member_of_the_chain_that_can_handle_the_argument_passed1()
         {
             var testArg = new List<int> {1, 2, 3};
-            ChainFactory<int>._Then chainSetUp = NeatChain.ThatAcceptsArgumentType<int>.ToBeHandledBy
+            var chainSetUp = NeatChain.ThatAcceptsArgumentType<int>.ToBeHandledBy
                 .AtMostOneOfTheseHandlers(
                     new Number1Handler(),
                     new Number2Handler(),
@@ -57,10 +64,9 @@ You can make things as explicit as this
             });
         }
 ```
-
- You can make things as simple as this
-
+You can make things as simple as this
 ```cs
+
         /// <summary>
         ///     You can make things as simple as this
         /// </summary>
@@ -68,7 +74,7 @@ You can make things as explicit as this
         public void it_should_execute_only_the_member_of_the_chain_that_can_handle_the_argument_passed2()
         {
             var testArg = new List<int> {1, 2, 3};
-            ChainFactory<int>._Then chainSetUp = NeatChain.SetUp(
+            var  chainSetUp = NeatChain.SetUp(
                 ExecutionStrategy.OnlyTheFirsHandlerFoundWhoHasTheResponsibilityIsExecuted,
                 new Number1Handler(),
                 new Number2Handler(),
@@ -82,17 +88,16 @@ You can make things as explicit as this
             });
         }
 ```
-
-You can make things as easy as this
-
+ You can make things as easy as this
 ```cs
+
         /// <summary>
         ///     You can make things as easy as this
         /// </summary>
         [TestMethod]
         public void it_should_execute_only_the_member_of_the_chain_that_can_handle_the_argument_passed3()
         {
-            ChainFactory<int>._Then chainSetUp = NeatChain.SetUp(new Number1Handler());
+            var  chainSetUp = NeatChain.SetUp(new Number1Handler());
 
             List<int> result;
             Assert.IsTrue(chainSetUp.ExecutionChainSucceeded(out result, 1));
@@ -106,37 +111,32 @@ You can make things as easy as this
             //3. method execution still passes through the same pipeline as chain execution, thus same neat exception handling
         }
 ```
-
- You can make things as 'one liner' as this
-
+You can make things as 'one liner' as this
 ```cs
+
         /// <summary>
         ///     You can make things as 'one liner' as this
         /// </summary>
         [TestMethod]
         public void it_should_execute_only_the_member_of_the_chain_that_can_handle_the_argument_passed4()
         {
-            List<int> result = NeatChain.SetUpWithArgument(1, new Number1Handler()).Execute<int>();
+            var result = NeatChain.SetUpWithArgument(1, new Number1Handler()).Execute<int>();
 
             Assert.IsTrue(result.Count == 1);
             Assert.AreEqual(100, result.First());
         }
-```
 
-Or you can have full control
-
-```cs
         /// <summary>
-        ///     Or you can have full control
+        ///     Or you can make things as complicated as this
         /// </summary>
         [TestMethod]
         public void it_should_execute_only_the_member_of_the_chain_that_can_handle_the_argument_passed5()
         {
             const string exceptionMessageCreatedInTheConverter = "exceptionMessageCreatedInTheConverter";
-            bool exceptionWasRaised = false;
-            bool converterWasCalled = false;
+            var exceptionWasRaised = false;
+            var converterWasCalled = false;
             var testArg = new List<int> {1, 2, 3};
-            ChainFactory<int>._Then chainSetUp = NeatChain.SetUp(
+            var  chainSetUp = NeatChain.SetUp(
                 ExecutionStrategy.OnlyTheFirsHandlerFoundWhoHasTheResponsibilityIsExecuted,
                 new Number1Handler(),
                 new Number2Handler(),
@@ -172,39 +172,32 @@ Or you can have full control
             });
         }
         
-```
-
-
-
-```cs       
-    }
-    
-
-}
-
-
-```
-
-The class definitions
+ ```
 
 ```cs
+       
+    }
+}
+
+```
+```cs
+
 using System;
 using System.Collections.Generic;
 
-namespace NeatChain.Tests.TestHandlers
+namespace NeatChainFx.Tests.TestHandlers
 {
-    public class Number1Handler : AChainMemberThatCanHandleArgumentType<int>
+    public class Number1Handler : NetChainHandler<int>
     {
-        protected override List<Action<int, int>> GetValidationDefinitions(ItIsRequired itIsRequired)
+        protected override List<Action<int, int>> SetValidations(ChainCondition chainCondition, List<Action<int, int>> validations)
         {
-            return new List<Action<int, int>>
-            {
-                (arg, index) => itIsRequired.That(arg).IsNotNull(),
-                (arg, index) => itIsRequired.That(arg).IsAn<int>()
-            };
+            validations.Add((arg, index) => chainCondition.Requires(arg).IsNotNull());
+            validations.Add((arg, index) => chainCondition.Requires(arg).IsAn<int>());
+            return validations;
         }
 
-        protected override bool ItHasTheResponsibility(int arg, List<int> args)
+
+        protected override bool HasResponsibilityToExecute(int arg, List<int> args)
         {
             return (arg == 1);
         }
@@ -215,29 +208,25 @@ namespace NeatChain.Tests.TestHandlers
         }
     }
 }
-
 ```
 
-
-
 ```cs
+
 using System;
 using System.Collections.Generic;
 
-namespace NeatChain.Tests.TestHandlers
+namespace NeatChainFx.Tests.TestHandlers
 {
-    public class Number2Handler : AChainMemberThatCanHandleArgumentType<int>
+    public class Number2Handler : NetChainHandler<int>
     {
-        protected override List<Action<int, int>> GetValidationDefinitions(ItIsRequired itIsRequired)
+        protected override List<Action<int, int>> SetValidations(ChainCondition chainCondition, List<Action<int, int>> validations)
         {
-            return new List<Action<int, int>>
-            {
-                (arg, index) => itIsRequired.That(arg).IsNotNull(),
-                (arg, index) => itIsRequired.That(arg).IsAn<int>()
-            };
+            validations.Add((arg, index) => chainCondition.Requires(arg).IsNotNull());
+            validations.Add((arg, index) => chainCondition.Requires(arg).IsAn<int>());
+            return validations;
         }
 
-        protected override bool ItHasTheResponsibility(int arg, List<int> args)
+        protected override bool HasResponsibilityToExecute(int arg, List<int> args)
         {
             return (arg == 2);
         }
@@ -248,43 +237,96 @@ namespace NeatChain.Tests.TestHandlers
         }
     }
 }
-
 ```
 
-
-
 ```cs
+
 using System;
 using System.Collections.Generic;
 
-namespace NeatChain.Tests.TestHandlers
+namespace NeatChainFx.Tests.TestHandlers
 {
-    public class Number3Handler : AChainMemberThatCanHandleArgumentType<int>
+    public class Number3Handler : NetChainHandler<int>
     {
-        protected override List<Action<int, int>> GetValidationDefinitions(ItIsRequired itIsRequired)
+        protected override List<Action<int, int>> SetValidations(ChainCondition chainCondition, List<Action<int, int>> validations)
         {
-            return new List<Action<int, int>>
-            {
-                (arg, index) => itIsRequired.That(arg).IsNotNull(),
-                (arg, index) => itIsRequired.That(arg).IsAn<int>()
-            };
+            validations.Add((arg, index) => chainCondition.Requires(arg).IsNotNull());
+            validations.Add((arg, index) => chainCondition.Requires(arg).IsAn<int>());
+            return validations;
         }
 
-        protected override bool ItHasTheResponsibility(int arg, List<int> args)
+        protected override bool HasResponsibilityToExecute(int arg, List<int> args)
         {
             return (arg == 3);
         }
 
-
         protected override List<dynamic> Execute(int arg, List<int> args)
         {
-            return new List<dynamic> {arg*100};
+            return new List<dynamic> { arg * 100 };
         }
     }
 }
 
+
+
 ```
 
+
+```cs
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NeatChainFx.Tests.TestHandlers;
+
+namespace NeatChainFx.Tests
+{
+```
+
+```cs
+
+    [TestClass]
+    public class when_Number1Handler_is_run_outside_the_usual_pileline
+    {
+        [TestMethod]
+        public void it_should_only_be_able_to_handle_arguments_that_has_the_value_of_one()
+        {
+            var inputIsValid = true;
+            var number1Handler = new Number1Handler();
+            number1Handler.ValidateInputArguments(1, (message, e) => { inputIsValid = false; });
+            Assert.IsTrue(inputIsValid);
+            Assert.IsTrue(number1Handler.HasResponsibilityToExecute(1));
+            Assert.AreEqual(100, number1Handler.Execute(1).FirstOrDefault());
+        }
+```
+
+```cs
+
+        [TestMethod]
+        public void it_should_not_not_be_responsible_to_handle_values_other_than_one()
+        {
+            var argList = new List<int> {2, 3, -1};
+
+            argList.ForEach(arg =>
+            {
+                var inputIsValid = true;
+                var number1Handler = new Number1Handler();
+                number1Handler.ValidateInputArguments(arg, (message, e) => { inputIsValid = false; });
+                //input is valid quite alright
+                Assert.IsTrue(inputIsValid);
+                //but its not its own responsibility to handle it
+                Assert.IsFalse(number1Handler.HasResponsibilityToExecute(arg));
+                //even though theoratically it can still process it, but in the pipeline, this will not be alloed to happen
+                Assert.AreEqual(100*arg, number1Handler.Execute(arg).FirstOrDefault());
+            });
+        }
+        
+ ```
+
+```cs
+       
+    }
+}
+```
 
 
 
