@@ -2,6 +2,16 @@ NeatChain
 
 =========
 
+
+Get it via nuget
+
+===
+
+
+Install-Package NeatChain
+
+
+
 Neatly set up a chain of objects that are strategically executed
 
 
