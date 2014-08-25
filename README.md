@@ -1,3 +1,16 @@
+The reason as well as the goal why I am developing this framework, sortof,  is to enable a wide range of developers (from junior to senior) develop clean, testable, well tought of code ( as I bring utility of some design patterns closer) while also bringing some ease to refactoring legacy codes. I also intend to introduce, in the process, another angle to implementing dependency injection. Hopefully, with this, you can get started in no time writing clean code.
+
+All suggestions are welcomed.
+
+You can request a feature to be added, or contribute (have some tests to back it up :) )
+
+
+Thank you.
+
+Sam.
+
+
+
 (This documentation will be updated soon to the lattest version of neatchain. feel free to check out the updated tests here :  https://github.com/NeatChain/dev/blob/master/NeatChain.Tests/When_a_chain_is_created.cs and here: https://github.com/NeatChain/dev/blob/master/NeatChain.Tests/when_Number1Handler_is_run_outside_the_usual_pileline.cs )
 
 NeatChain
