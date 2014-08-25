@@ -1,4 +1,4 @@
-(This documentation will be updated soon to the lattest version of neatchain. feel free to check out the updated tests here :  https://github.com/NeatChain/dev/tree/master/NeatChain.Tests )
+(This documentation will be updated soon to the lattest version of neatchain. feel free to check out the updated tests here :  https://github.com/NeatChain/dev/blob/master/NeatChain.Tests/When_a_chain_is_created.cs and here: https://github.com/NeatChain/dev/blob/master/NeatChain.Tests/when_Number1Handler_is_run_outside_the_usual_pileline.cs )
 
 NeatChain
 
