@@ -1,3 +1,5 @@
+(This documentation will be updated soon to the lattest version of neatchain. feel free to check out the updated tests here :  https://github.com/NeatChain/dev/tree/master/NeatChain.Tests )
+
 NeatChain
 
 
